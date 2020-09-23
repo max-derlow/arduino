@@ -82,6 +82,17 @@ void compose() {
   }
 }
 
+void goBackOn(){
+  ledState=INCREASE;
+}
+
+void wavyshine(){
+  Serial.print("WAVE  ");
+  Serial.println(brightness);
+  brightness = sinewave(1000,128,64); // you can tweak the parameters of the sinewave
+  analogWrite(ledPin, brightness);
+  }
+
 void changeState(ledStates newState){
     // call to change state, will keep track of time since last state
     startMillis = millis();
@@ -117,4 +128,32 @@ int sinewave(float duration, float amplitude, int offset){
     int value = midpoint + midpoint * sin ( period * 2.0 * PI );
     value = value + offset; //offset allows you to move the wave up and down on the Y-axis. Should not exceed the value of amplitude to prevent clipping.
     return value;
+  }
+
+void doForMs(int duration, void (*function)()){
+  // this helper function allows us to execute another function for 'duration' amount of millisecs
+  bool doing = true;
+  startMillis = millis();
+  while(doing){
+    currentMillis = millis();
+    (*function)();
+    if (currentMillis - startMillis >= duration){
+      doing = false;
+      }
+    }
+   
+  }
+
+void doAfterMs(int duration, void (*function)()){
+  // this helper function allows us to execute another function AFTER a 'duration' amount of millisecs
+  bool doing = true;
+  startMillis = millis();
+  while(doing){
+    currentMillis = millis();
+    if (currentMillis - startMillis >= duration){
+      doing = false;
+      (*function)();
+      }
+    }
+   
   }
