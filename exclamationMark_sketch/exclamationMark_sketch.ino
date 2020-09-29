@@ -146,6 +146,7 @@ void alert(){ //testing
 void wavyshine(){
   brightness = sinewave(1000,16,2); // you can tweak the parameters of the sinewave
   analogWrite(ledPin, brightness);
+  plot("HUMING", brightness);
   }
 
 void changeState(ledStates newState){
