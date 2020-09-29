@@ -104,7 +104,6 @@ void compose() {
       } else {
       Serial.println("HUMMING");
       wavyshine();
-      plot("HUMING", brightness);
       }
     break;
 
@@ -186,19 +185,6 @@ int sinewave(float duration, float amplitude, int offset){
     return value;
   }
 
-  
-void plot(char *state, int brightness){
-    // use this function to plot a graph.
-    // it will normalize the auto-scaling plotter
-
-    if ((p % plotFrequency) == 0){
-      Serial.print(state);
-      Serial.print(", ");
-      Serial.print(brightness);
-      Serial.println(", 0, 300");
-    }
-    p++;
-  }
 
   void doForMs(int duration, void (*function)()){
   // this helper function allows us to execute another function for 'duration' amount of millisecs
