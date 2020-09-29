@@ -4,18 +4,20 @@ enum ledStates ledState; // We define 'ledState' as type ledStates'
 unsigned long startMillis;  //some global variables available anywhere in the program
 unsigned long currentMillis;
 
-int brightness = 125; // our main variable for setting the brightness of the LED
+int brightness = 180; // our main variable for setting the brightness of the LED
 float velocity = 1.0; // the speed at which we change the brightness.
 int ledPin = 9; // we use pin 9 for PWM
 
 void setup() {
   // put your setup code here, to run once:
+  ledState = STAY;
   pinMode(ledPin, OUTPUT); // set ledPin as an output.
   Serial.begin(9600); // initiate the Serial monitor so we can use the Serial Plotter to graph our patterns
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  analogWrite(ledPin, brightness);
   compose();
   delay(10);
   analogWrite(ledPin, brightness);
@@ -71,7 +73,7 @@ void compose() {
     Serial.print("STAY"  );
     Serial.println(brightness);
     brightness = brightness;
-    doAfterMs(5000, goBackOn);
+    doAfterMs(30000, goBackOn);
     break;
 
   case ON:
@@ -84,7 +86,7 @@ void compose() {
     Serial.print("OFF"  );
     Serial.println(brightness);
     brightness = 0;
-    doAfterMs(5000, goBackOn);
+    doAfterMs(3000, goBackOn);
     break;
     
   
