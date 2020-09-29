@@ -92,8 +92,6 @@ void compose() {
     brightness = 0;
     doAfterMs(5000, goBackOn);
     break;
-    
-  
   }
 }
 

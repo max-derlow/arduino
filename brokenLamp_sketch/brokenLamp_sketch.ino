@@ -1,23 +1,25 @@
-enum ledStates {ALERT, DETECTION, HUMMING, INCREASE, DECREASE, STAY, WAVE, OFF, ON}; // Here we make nicknames for the different states our program supports.
+enum ledStates {FADE, INCREASE, DECREASE, STAY, WAVE, OFF, ON}; // Here we make nicknames for the different states our program supports.
 enum ledStates ledState; // We define 'ledState' as type ledStates'
 enum ledStates previousLedState = ledState;
 
 unsigned long startMillis;  //some global variables available anywhere in the program
 unsigned long currentMillis;
 
-int brightness = 0; // our main variable for setting the brightness of the LED
+int brightness = 255; // our main variable for setting the brightness of the LED
 float velocity = 1.0; // the speed at which we change the brightness.
-const int ledPin = 9; // we use pin 9 for PWM
-const int buttonPin = 2;
-int buttonState = 0;
+int ledPin = 9; // we use pin 9 for PWM
 int p = 0; // use to keep track how often we plot
 int plotFrequency = 3; // how often we plot, every Nth time.
 
+//randy variables
+int randomDuration;
+float randomVelocity;
+float randomResistance;
+
 void setup() {
   // put your setup code here, to run once:
+  ledState = FADE;
   pinMode(ledPin, OUTPUT); // set ledPin as an output.
-  pinMode(buttonPin, INPUT);
-  ledState = HUMMING;
   Serial.begin(9600); // initiate the Serial monitor so we can use the Serial Plotter to graph our patterns
 }
 
@@ -25,22 +27,8 @@ void loop() {
   // put your main code here, to run repeatedly:
   compose();
   delay(10);
-  buttonState = digitalRead(buttonPin);
   analogWrite(ledPin, brightness);
   currentMillis = millis(); //store the current time since the program started
-  Serial.println("Buttonstate: " + buttonState);
-  Serial.print(buttonState);
-
-  /*
-  Serial.println("Buttonstate: " + buttonState);
-    if (buttonState == HIGH) {
-    // turn LED on:
-      Serial.println("Buttonstate: High");
-  } else {
-    // turn LED off:
-      Serial.println("Buttonstate: Low");
-  }
-  */
 }
 
 void compose() {
@@ -50,104 +38,78 @@ void compose() {
   
   switch (ledState){
 
-  case INCREASE:
-    brightness = increase_brightness(brightness, 1);
+  case FADE:
+    randomDuration = random(500,5000);
+    randomVelocity = random(float(50),float(100))/float(100);
+    Serial.print("Random duration: ");
+    Serial.println(randomDuration);
+    Serial.print("Random velocity: ");
+    Serial.println(randomVelocity);
+    decreaseForMs(brightness, randomDuration, randomVelocity);
+   //doForMs(randomDuration, decrease_brightness(randomDuration, randomVelocity)); //breaks the code
+    break;
 
-    plot("INCREASING", brightness);
+  case INCREASE:
+    //brightness = increase_brightness(brightness, 1);
+
+    //plot("INCREASING", brightness);
         
     if (brightness > 250){
       //ledState = WAVE;
-      changeState(WAVE);
       }
     break;
    
   case DECREASE:
-    brightness = decrease_brightness(brightness, 0.5);
-    plot("DECREASING", brightness);
+    //brightness = decrease_brightness(brightness, 0.5);
+    //plot("DECREASING", brightness);
       if (brightness == 0){
-      changeState(OFF);
       }
      break;
 
   case WAVE:
-    plot("WAVE", brightness);
+    //plot("WAVE", brightness);
     
-    brightness = sinewave(1000,256,0); // you can tweak the parameters of the sinewave
+    //brightness = sinewave(1000,256,0); // you can tweak the parameters of the sinewave
     analogWrite(ledPin, brightness);
     
     if (currentMillis - startMillis >= 5000){ //change state after 5 secs by comparing the time elapsed since we last change state
-      changeState(DECREASE);
       }
     break;
     
   case STAY:
-    plot("STAY", brightness);
+    //plot("STAY", brightness);
     brightness = brightness;
     break;
 
   case ON:
-    plot("ON", brightness);
+    //plot("ON", brightness);
     brightness = 255;
     break;
 
   case OFF:
-    plot("OFF", brightness);
+    //plot("OFF", brightness);
     brightness = 0;
     if (currentMillis - startMillis >= 1000){
-      changeState(INCREASE);
       }
     break;
-
-  case HUMMING:
-    if(buttonState == 1){
-      changeState(DETECTION);
-      } else {
-      Serial.println("HUMMING");
-      wavyshine();
-      plot("HUMING", brightness);
-      }
-    break;
-
-  case DETECTION:
-      Serial.println("DETECTION");
-      brightness = 255;
-      plot("DETECTION", brightness);
-      changeState(ALERT);
-      break;
-
-  case ALERT:
-    if(buttonState == 1) {
-      changeState(DETECTION);
-      } else {
-      Serial.println("ALERT");
-      doForMs(5000, alert);
-      changeState(HUMMING);
-      }
-      break;
   }
 }
 
-void alert(){ //testing
-  if(buttonState == 1) {
-    Serial.println("NEW ALERT!!!");
-    changeState(DETECTION);
-    } 
-  brightness = sinewave(500,255,128); // you can tweak the parameters of the sinewave
-  analogWrite(ledPin, brightness);
-  plot("ALERT", brightness);
-  }
+void goBackOn(){
+  ledState=INCREASE;
+}
 
-//placeholder for fade-effect to make smoother transitions
-/*void alert(){ //testing
-  brightness = sinewave(1000,255,128); // you can tweak the parameters of the sinewave
+void Fade(int brightness, float velocity){
+  brightness = sinewave(1000,128,64); // you can tweak the parameters of the sinewave
   analogWrite(ledPin, brightness);
-  changeState(HUMMING);
-  }
-*/
+}
+
 void wavyshine(){
-  brightness = sinewave(1000,16,2); // you can tweak the parameters of the sinewave
+  Serial.print("WAVE  ");
+  Serial.println(brightness);
+  brightness = sinewave(1000,128,64); // you can tweak the parameters of the sinewave
   analogWrite(ledPin, brightness);
-  }
+}
 
 void changeState(ledStates newState){
     // call to change state, will keep track of time since last state
@@ -173,7 +135,11 @@ int increase_brightness (int brightness, float velocity){
   }
 
 int decrease_brightness (int brightness, float velocity){
-    return brightness = brightness - 1 * velocity;
+    brightness = brightness - 5 * velocity;
+    analogWrite(ledPin, brightness);
+    Serial.print("Brightness: ");
+    Serial.println(brightness);
+    return brightness;
   }
 
 int sinewave(float duration, float amplitude, int offset){
@@ -186,41 +152,32 @@ int sinewave(float duration, float amplitude, int offset){
     return value;
   }
 
-  
-void plot(char *state, int brightness){
-    // use this function to plot a graph.
-    // it will normalize the auto-scaling plotter
-
-    if ((p % plotFrequency) == 0){
-      Serial.print(state);
-      Serial.print(", ");
-      Serial.print(brightness);
-      Serial.println(", 0, 300");
-    }
-    p++;
-  }
-
-  void doForMs(int duration, void (*function)()){
+void decreaseForMs(int brightness, int duration, float velocity){
   // this helper function allows us to execute another function for 'duration' amount of millisecs
   bool doing = true;
   startMillis = millis();
   while(doing){
     currentMillis = millis();
-    buttonState = digitalRead(buttonPin);
-    
-    if (buttonState == 1){
-      Serial.println("please abort ffs");
-      changeState(DETECTION);
-      doing = false;
-      }
-    (*function)();
-
+    decrease_brightness(brightness, float(velocity));
     if (currentMillis - startMillis >= duration){
       doing = false;
       }
     }
   }
-
+/*
+void doForMs(int duration, void (*function)(int brightness, float velocity)){
+  // this helper function allows us to execute another function for 'duration' amount of millisecs
+  bool doing = true;
+  startMillis = millis();
+  while(doing){
+    currentMillis = millis();
+    (*function)(brightness, velocity);
+    if (currentMillis - startMillis >= duration){
+      doing = false;
+      }
+    }
+  }
+*/
 void doAfterMs(int duration, void (*function)()){
   // this helper function allows us to execute another function AFTER a 'duration' amount of millisecs
   bool doing = true;
