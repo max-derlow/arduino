@@ -28,8 +28,8 @@ void loop() {
   buttonState = digitalRead(buttonPin);
   analogWrite(ledPin, brightness);
   currentMillis = millis(); //store the current time since the program started
-  Serial.println("Buttonstate: " + buttonState);
-  Serial.print(buttonState);
+  //Serial.println("Buttonstate: " + buttonState);
+  //Serial.print(buttonState);
 
   /*
   Serial.println("Buttonstate: " + buttonState);
