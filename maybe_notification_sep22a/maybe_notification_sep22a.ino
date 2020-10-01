@@ -8,6 +8,7 @@ int brightness = 0; // our main variable for setting the brightness of the LED
 float velocity = 1.0; // the speed at which we change the brightness.
 int ledPin = 9; // we use pin 9 for PWM
 int i = 0;
+int y = 0;
 int p = 0; // use to keep track how often we plot
 int plotFrequency = 3; // how often we plot, every Nth time.
 
@@ -41,7 +42,6 @@ void compose() {
     if(i >= 3) {
        i = 0;
       ledState = DECREASE;
-     
     } else {
       ledState = STAY;
     }
@@ -65,7 +65,9 @@ void compose() {
     Serial.println(brightness);
     //ledState = INCREASE;
     if (brightness == 0) {
-      ledState = slowINCREASE;
+      y = 1;
+      ledState = STAY;
+      //brightness = 255;
     }
      
      break;
@@ -81,7 +83,13 @@ void compose() {
     Serial.print("STAY"  );
     Serial.println(brightness);
     brightness = brightness;
+    if (y >= 1){
+      doAfterMs(700, emptyFunction);
+      y = 0;
+      }   
+      
     doAfterMs(1000, emptyFunction);
+ 
     if(brightness >= 1){
       ledState = OFF;
     } else {
@@ -101,8 +109,6 @@ void compose() {
     brightness = 0;
     ledState = STAY;
     break;
-    
-  
   }
 }
 
