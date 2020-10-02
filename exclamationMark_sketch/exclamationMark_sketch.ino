@@ -72,7 +72,7 @@ void compose() {
   case WAVE:
     plot("WAVE", brightness);
     
-    brightness = sinewave(1000,256,0); // you can tweak the parameters of the sinewave
+    brightness = sinewave(300,256,0); // you can tweak the parameters of the sinewave
     analogWrite(ledPin, brightness);
     
     if (currentMillis - startMillis >= 5000){ //change state after 5 secs by comparing the time elapsed since we last change state
@@ -146,7 +146,7 @@ void alert(){ //testing
 void wavyshine(){
   brightness = sinewave(1000,16,2); // you can tweak the parameters of the sinewave
   analogWrite(ledPin, brightness);
-  plot("HUMING", brightness);
+  plot("HUMMING", brightness);
   }
 
 void changeState(ledStates newState){
@@ -155,7 +155,7 @@ void changeState(ledStates newState){
     ledState = newState;
   }
   
-void plot(char *state, int brightness){
+void plot(char state, int brightness){
     // use this function to plot a graph.
     // it will normalize the auto-scaling plotter
 
