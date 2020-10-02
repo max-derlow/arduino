@@ -17,14 +17,14 @@ void setup() {
   // put your setup code here, to run once:
   pinMode(ledPin, OUTPUT); // set ledPin as an output.
   pinMode(buttonPin, INPUT);
-  ledState = INCREASE;
+  ledState = HUMMING;
   Serial.begin(9600); // initiate the Serial monitor so we can use the Serial Plotter to graph our patterns
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   compose();
-  delay(2);
+  delay(10);
   buttonState = digitalRead(buttonPin);
   analogWrite(ledPin, brightness);
   currentMillis = millis(); //store the current time since the program started
@@ -51,22 +51,22 @@ void compose() {
   switch (ledState){
 
   case INCREASE:
-    brightness = increase_brightness(brightness, 2);
+    brightness = increase_brightness(brightness, 1);
+
     plot("INCREASING", brightness);
         
-    if (brightness > 164){
+    if (brightness > 250){
       //ledState = WAVE;
-      changeState(DECREASE);
-    }
+      changeState(WAVE);
+      }
     break;
    
   case DECREASE:
-    brightness = decrease_brightness(brightness, 2);
+    brightness = decrease_brightness(brightness, 0.5);
     plot("DECREASING", brightness);
-    
-    if (brightness <= 32){
-      changeState(INCREASE);
-     }
+      if (brightness == 0){
+      changeState(OFF);
+      }
      break;
 
   case WAVE:
@@ -119,8 +119,8 @@ void compose() {
       changeState(DETECTION);
       } else {
       Serial.println("ALERT");
-      doForMs(316800, alert);
-      //changeState(HUMMING);
+      doForMs(5000, alert);
+      changeState(HUMMING);
       }
       break;
   }
@@ -131,7 +131,7 @@ void alert(){ //testing
     Serial.println("NEW ALERT!!!");
     changeState(DETECTION);
     } 
-  brightness = sinewave(500,168,128); // you can tweak the parameters of the sinewave
+  brightness = sinewave(500,255,128); // you can tweak the parameters of the sinewave
   analogWrite(ledPin, brightness);
   plot("ALERT", brightness);
   }

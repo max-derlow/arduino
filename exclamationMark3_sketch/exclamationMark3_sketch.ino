@@ -12,20 +12,25 @@ int bufferer = 0;
 float velocity = 1.0; // the speed at which we change the brightness.
 const int ledPin = 9; // we use pin 9 for PWM
 const int buttonPin = 2;
+const int photoSensor = 13;
 int buttonState = 0;
 int p = 0; // use to keep track how often we plot
 int plotFrequency = 3; // how often we plot, every Nth time.
+int photoValue = 0;
 
 void setup() {
   // put your setup code here, to run once:
   pinMode(ledPin, OUTPUT); // set ledPin as an output.
   pinMode(buttonPin, INPUT);
+  pinMode(photoSensor, INPUT);
   ledState = INCREASE;
   Serial.begin(9600); // initiate the Serial monitor so we can use the Serial Plotter to graph our patterns
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  photoValue = digitalRead(photoSensor);
+  Serial.println(photoSensor);
   compose();
   delay(14 + iDelay);
   buttonState = digitalRead(buttonPin);
@@ -56,11 +61,11 @@ void compose() {
     case INCREASE:
     // smooth out the curve when @ values of 6 or lower.
       if (brightness <= 6){
-        Serial.println("increase trigger");
+        //Serial.println("increase trigger");
         brightness = increase_brightness(brightness, 1.5);
       } else {
       brightness = increase_brightness(brightness, 2.8);
-      plot("INCREASING", brightness);
+      //plot("INCREASING", brightness);
       }
 
       if (brightness >= 64) {
@@ -84,19 +89,19 @@ float iDelay = 0;
 float iDelayVelocity = 1;
 float iDelayVelocityMultiplier = 0.01;
  */
-      plot("DECREASING", brightness);
+      //plot("DECREASING", brightness);
       if (brightness <= 2) {
         iDelay = iDelay + (0.85 * iDelayVelocity);
         iDelayVelocity = iDelayVelocity + 0.05 + iDelayVelocityMultiplier;
         iDelayVelocityMultiplier = iDelayVelocityMultiplier + 0.01;
-        Serial.println(iDelay + 14);
-        Serial.println(iDelayVelocity);
+        //Serial.println(iDelay + 14);
+        //Serial.println(iDelayVelocity);
         changeState(INCREASE);
       }
       break;
 
     case WAVE:
-      plot("WAVE", brightness);
+      //plot("WAVE", brightness);
 
       brightness = sinewave(1000, 256, 0); // you can tweak the parameters of the sinewave
       analogWrite(ledPin, brightness);
@@ -107,17 +112,17 @@ float iDelayVelocityMultiplier = 0.01;
       break;
 
     case STAY:
-      plot("STAY", brightness);
+      //plot("STAY", brightness);
       brightness = brightness;
       break;
 
     case ON:
-      plot("ON", brightness);
+      //plot("ON", brightness);
       brightness = 255;
       break;
 
     case OFF:
-      plot("OFF", brightness);
+      //plot("OFF", brightness);
       brightness = 0;
       if (currentMillis - startMillis >= 1000) {
         changeState(INCREASE);
@@ -136,7 +141,7 @@ float iDelayVelocityMultiplier = 0.01;
     case DETECTION:
       //Serial.println("DETECTION");
       brightness = 255;
-      plot("DETECTION", brightness);
+      //plot("DETECTION", brightness);
       changeState(ALERT);
       break;
 
@@ -159,7 +164,7 @@ void alert() { //testing
   }
   brightness = sinewave(500, 255, 128); // you can tweak the parameters of the sinewave
   analogWrite(ledPin, brightness);
-  plot("ALERT", brightness);
+  //plot("ALERT", brightness);
 }
 
 //placeholder for fade-effect to make smoother transitions
@@ -172,7 +177,7 @@ void alert() { //testing
 void wavyshine() {
   brightness = sinewave(1000, 16, 2); // you can tweak the parameters of the sinewave
   analogWrite(ledPin, brightness);
-  plot("HUMING", brightness);
+  //plot("HUMING", brightness);
 }
 
 void changeState(ledStates newState) {
