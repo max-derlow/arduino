@@ -7,7 +7,7 @@ unsigned long currentMillis;
 
 int brightness = 0; // our main variable for setting the brightness of the LED
 float velocity = 1.0; // the speed at which we change the brightness.
-const int ledPin = 9; // we use pin 9 for PWM
+const int ledPin = 6; // we use pin 9 for PWM
 const int buttonPin = 2;
 int buttonState = 0;
 int p = 0; // use to keep track how often we plot
@@ -24,14 +24,14 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   compose();
-  delay(10);
+  delay(5);
   buttonState = digitalRead(buttonPin);
   analogWrite(ledPin, brightness);
   currentMillis = millis(); //store the current time since the program started
   //Serial.println("Buttonstate: " + buttonState);
   //Serial.print(buttonState);
 
-  /*
+  
   Serial.println("Buttonstate: " + buttonState);
     if (buttonState == HIGH) {
     // turn LED on:
@@ -40,7 +40,7 @@ void loop() {
     // turn LED off:
       Serial.println("Buttonstate: Low");
   }
-  */
+ 
 }
 
 void compose() {
@@ -102,7 +102,7 @@ void compose() {
     if(buttonState == 1){
       changeState(DETECTION);
       } else {
-      Serial.println("HUMMING");
+      Serial.println("");
       wavyshine();
       }
     break;
@@ -144,9 +144,9 @@ void alert(){ //testing
   }
 */
 void wavyshine(){
-  brightness = sinewave(1000,16,2); // you can tweak the parameters of the sinewave
+  brightness = sinewave(4000,17,1); // you can tweak the parameters of the sinewave
   analogWrite(ledPin, brightness);
-  plot("HUMING", brightness);
+  plot("HUMMING", brightness);
   }
 
 void changeState(ledStates newState){
