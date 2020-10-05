@@ -1,13 +1,5 @@
-/*
-* Ultrasonic Sensor HC-SR04 and Arduino Tutorial
-*
-* by Dejan Nedelkovski,
-* www.HowToMechatronics.com
-*
-*/
-// defines pins numbers
-const int trigPin = 3;
-const int echoPin = 2;
+const int trigPin = 9;
+const int echoPin = 10;
 // defines variables
 long duration;
 int distance;
@@ -19,10 +11,10 @@ Serial.begin(9600); // Starts the serial communication
 void loop() {
 // Clears the trigPin
 digitalWrite(trigPin, LOW);
-delayMicroseconds(2);
+delayMicroseconds(20);
 // Sets the trigPin on HIGH state for 10 micro seconds
 digitalWrite(trigPin, HIGH);
-delayMicroseconds(10);
+delayMicroseconds(20);
 digitalWrite(trigPin, LOW);
 // Reads the echoPin, returns the sound wave travel time in microseconds
 duration = pulseIn(echoPin, HIGH);

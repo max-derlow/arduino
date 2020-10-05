@@ -14,11 +14,8 @@ void setup() {
 void loop(){
   analogValue = analogRead(lightSensorPin);
   Serial.println(analogValue);
-  Serial.println(servoValue);
+  //Serial.println(servoValue);
   servo.write(0);
-  delay(500);
-  delay(1000);
   servo.write(180);
-  delay(500);
-  delay(1000);
+  delay(200);
 }
